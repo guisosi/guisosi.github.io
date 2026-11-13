@@ -1,0 +1,24 @@
+---
+import { statusLabel, type Status } from '../content.config';
+
+interface Props {
+  status: Status;
+}
+const { status } = Astro.props;
+---
+
+<span class={`sm sm--${status}`}>{statusLabel[status]}</span>
+
+<style>
+  /* plain ink, like a note on a file */
+  .sm {
+    font-style: italic;
+    letter-spacing: 0.02em;
+  }
+  .sm--finished,
+  .sm--pwned {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+  }
+</style>

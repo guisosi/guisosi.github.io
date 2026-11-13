@@ -1,0 +1,132 @@
+---
+interface Props {
+  cam?: string;
+  place?: string;
+  side?: string[];
+  note?: string[];
+}
+
+const {
+  cam = 'CAM_01',
+  place = 'VOID',
+  side = ['observe', 'analyze', 'exploit', 'report.'],
+  note = ['same strings', 'different', 'targets.'],
+} = Astro.props;
+
+// build time in UTC, replaced by the visitor's clock when JS runs
+const now = new Date();
+const pad = (n: number) => String(n).padStart(2, '0');
+const date = `${now.getUTCFullYear()}.${pad(now.getUTCMonth() + 1)}.${pad(now.getUTCDate())}`;
+const time = `${pad(now.getUTCHours())}:${pad(now.getUTCMinutes())}:${pad(now.getUTCSeconds())}`;
+---
+
+<div class="cam">
+  <span class="corner corner--tl"></span><span class="corner corner--tr"></span>
+  <span class="corner corner--bl"></span><span class="corner corner--br"></span>
+
+  <div class="hud hud--tl">
+    {cam}<br />{place}<br /><span data-clock="date">{date}</span><br /><span data-clock="time">{time}</span>&nbsp;<span data-clock="tz">UTC</span>
+  </div>
+  <div class="hud hud--tr"><span class="rec" aria-hidden="true">●</span> REC</div>
+  <div class="hud hud--note">{note.map((l) => <>{l}<br /></>)}<span class="dash"></span></div>
+  <div class="hud hud--side"><span class="dash"></span>{side.map((l) => <>{l}<br /></>)}<span class="dash"></span></div>
+  <div class="hud hud--br"><span data-clock="date">{date}</span>&nbsp;&nbsp;<span data-clock="time">{time}</span></div>
+
+  <div class="cam__view">
+    <slot />
+  </div>
+</div>
+
+<script>
+  // live clock in the visitor's local time
+  const pad = (n: number) => String(n).padStart(2, '0');
+  const set = (key: string, value: string) =>
+    document.querySelectorAll(`[data-clock="${key}"]`).forEach((el) => (el.textContent = value));
+
+  function tick() {
+    const d = new Date();
+    set('date', `${d.getFullYear()}.${pad(d.getMonth() + 1)}.${pad(d.getDate())}`);
+    set('time', `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`);
+  }
+
+  set('tz', 'LOCAL');
+  tick();
+  setInterval(tick, 1000);
+</script>
+
+<style>
+  .cam {
+    position: relative;
+    aspect-ratio: 4 / 5;
+    background:
+      radial-gradient(circle at 50% 42%, rgb(216 31 38 / 0.12), transparent 60%),
+      #050505;
+    border: 1px solid var(--line);
+    overflow: hidden;
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    line-height: 1.45;
+    color: #c9c9c6;
+  }
+  /* scanlines + vignette */
+  .cam::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+      repeating-linear-gradient(to bottom, rgb(255 255 255 / 0.035) 0 1px, transparent 1px 3px),
+      radial-gradient(ellipse at center, transparent 55%, rgb(0 0 0 / 0.7));
+  }
+  .cam__view {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+  }
+  .corner {
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    border-color: #8a8a87;
+    border-style: solid;
+    z-index: 2;
+  }
+  .corner--tl { top: 10px; left: 10px; border-width: 1px 0 0 1px; }
+  .corner--tr { top: 10px; right: 10px; border-width: 1px 1px 0 0; }
+  .corner--bl { bottom: 10px; left: 10px; border-width: 0 0 1px 1px; }
+  .corner--br { bottom: 10px; right: 10px; border-width: 0 1px 1px 0; }
+
+  .hud {
+    position: absolute;
+    z-index: 2;
+    text-transform: uppercase;
+  }
+  .hud--tl { top: 18px; left: 22px; font-size: 0.82rem; }
+  .hud--tr { top: 18px; right: 24px; font-size: 0.82rem; }
+  .hud--note { top: 92px; right: 24px; text-align: right; color: var(--muted); }
+  .hud--side { bottom: 22px; left: 22px; color: var(--muted); }
+  .hud--br { bottom: 22px; right: 24px; color: var(--muted); }
+  .dash {
+    display: block;
+    width: 18px;
+    height: 1px;
+    margin: 6px 0;
+    background: currentColor;
+  }
+  .hud--note .dash {
+    margin-left: auto;
+  }
+  .rec {
+    color: var(--blood);
+    animation: rec 1.4s steps(1) infinite;
+  }
+  @keyframes rec {
+    50% { opacity: 0.15; }
+  }
+  @media (max-width: 480px) {
+    .cam { font-size: 0.58rem; }
+    .hud--tl, .hud--tr { font-size: 0.7rem; }
+    .hud--note { top: 78px; }
+  }
+</style>

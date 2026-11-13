@@ -1,0 +1,283 @@
+@import '@fontsource/courier-prime/400.css';
+@import '@fontsource/courier-prime/700.css';
+@import '@fontsource/courier-prime/400-italic.css';
+@import '@fontsource/playfair-display/400-italic.css';
+@import '@fontsource/playfair-display/900.css';
+
+:root {
+  --bg: #080808;
+  --surface: #0d0d0d;
+  --line: #333333;
+  --text: #e9e9e7;
+  --muted: #9a9a97;
+  --blood: #d81f26;
+  --ember: #ff5a4a;
+  --rust: #802000;
+
+  --font-mono: 'Courier Prime', 'Courier New', monospace;
+  --font-serif: 'Playfair Display', Georgia, serif;
+  --paper: #d9d0c0;
+  --ink: #1b1515;
+
+  --max: 1120px;
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--bg);
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+main {
+  flex: 1;
+}
+
+/* film grain over everything */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  pointer-events: none;
+  opacity: 0.07;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+
+/* distressed poster title, uses #distress from Base */
+.poster {
+  font-family: var(--font-serif);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  line-height: 0.95;
+  filter: url(#distress);
+}
+
+.wrap {
+  width: 100%;
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+.narrow {
+  max-width: 760px;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  line-height: 1.08;
+}
+
+h1 {
+  font-size: clamp(2.4rem, 7vw, 4.3rem);
+  letter-spacing: -0.055em;
+  margin: 0;
+}
+
+h2 {
+  font-size: clamp(1.8rem, 4.5vw, 2.6rem);
+  letter-spacing: -0.045em;
+  margin: 0;
+}
+
+/* italic serif accent: <em> inside headings */
+h1 em,
+h2 em {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-style: italic;
+  letter-spacing: -0.02em;
+  filter: url(#distress);
+}
+
+a {
+  color: var(--text);
+  text-decoration: underline;
+  text-decoration-color: var(--line);
+  text-underline-offset: 4px;
+  transition: color 0.15s, text-decoration-color 0.15s;
+}
+a:hover {
+  color: var(--ember);
+  text-decoration-color: var(--blood);
+}
+
+:focus-visible {
+  outline: 2px solid var(--blood);
+  outline-offset: 3px;
+}
+
+::selection {
+  background: var(--blood);
+  color: var(--text);
+}
+
+.muted {
+  color: var(--muted);
+}
+
+/* "* LABEL" over headings */
+.kicker {
+  display: block;
+  margin: 0 0 14px;
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.kicker::before {
+  content: '* ';
+  color: var(--blood);
+}
+
+.lead {
+  max-width: 560px;
+  font-size: 1.05rem;
+}
+
+/* buttons */
+.btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 28px;
+}
+.btn {
+  display: inline-block;
+  padding: 12px 18px;
+  border: 1px solid var(--text);
+  background: var(--text);
+  color: var(--bg);
+  font-size: 0.88rem;
+  text-decoration: none;
+}
+.btn:hover {
+  background: var(--blood);
+  border-color: var(--blood);
+  color: var(--text);
+}
+.btn--ghost {
+  background: transparent;
+  color: var(--text);
+}
+
+/* bordered box */
+.panel {
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+
+.tag {
+  display: inline-block;
+  padding: 0 7px;
+  border: 1px solid var(--line);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  vertical-align: middle;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* markdown */
+.prose {
+  font-size: 1rem;
+}
+.prose h2 {
+  margin: 2.2em 0 0.6em;
+  font-size: 1.6rem;
+  letter-spacing: -0.03em;
+}
+.prose h3 {
+  margin: 1.8em 0 0.5em;
+  font-size: 1.2rem;
+}
+.prose a {
+  text-decoration-color: var(--blood);
+}
+.prose pre {
+  padding: 16px;
+  border: 1px solid var(--line);
+  overflow-x: auto;
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+.prose :not(pre) > code {
+  padding: 0.05em 0.35em;
+  border: 1px solid var(--line);
+  color: var(--ember);
+  font-size: 0.92em;
+}
+.prose blockquote {
+  margin: 1.6em 0;
+  padding: 2px 18px;
+  border-left: 2px solid var(--blood);
+  color: var(--muted);
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 1.08rem;
+}
+.prose img {
+  max-width: 100%;
+  height: auto;
+  border: 1px solid var(--line);
+}
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  display: block;
+  overflow-x: auto;
+}
+.prose th,
+.prose td {
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  text-align: left;
+}
+.prose hr {
+  border: 0;
+  border-top: 1px solid var(--line);
+  margin: 2.5em 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}

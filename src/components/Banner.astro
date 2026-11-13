@@ -1,0 +1,143 @@
+---
+// wordmark typed on a worn typewriter: "guilh", backspace, "sosi"
+import '@fontsource/special-elite';
+
+const step = 0.35;
+let seed = 11;
+const rnd = () => ((seed = (seed * 9301 + 49297) % 233280) / 233280);
+
+const seq: { c: string; d: number; e?: number }[] = [];
+let t = 0.5;
+for (const c of 'guilh') {
+  seq.push({ c, d: t });
+  t += step;
+}
+t += 0.4; // hesitate
+seq[4].e = t; // h
+seq[3].e = t + 0.3; // l
+t += 0.75;
+for (const c of 'sosi') {
+  seq.push({ c, d: t });
+  t += step;
+}
+
+// small ink and alignment imperfections
+const keys = seq.map((k) => ({ ...k, y: (rnd() - 0.5) * 2, o: 0.82 + rnd() * 0.18 }));
+---
+
+<a href="/" class="wm" aria-label="guisosi, home">
+  <span class="tw" aria-hidden="true">
+    <span class="ghost">guisosi</span>
+    <span class="typed">
+      {
+        keys.map((k) => (
+          <span
+            class:list={['key', { del: k.e !== undefined }]}
+            style={`--d:${k.d.toFixed(2)}s;${k.e !== undefined ? `--e:${k.e.toFixed(2)}s;` : ''}--y:${k.y}px;--o:${k.o}`}
+          >
+            {k.c}
+          </span>
+        ))
+      }
+      <span class="caret"></span>
+    </span>
+  </span>
+</a>
+
+<style>
+  .wm {
+    display: flex;
+    justify-content: center;
+    width: fit-content;
+    margin: 0 auto;
+    font-family: 'Special Elite', monospace;
+    font-size: clamp(2.8rem, 9vw, 4.8rem);
+    line-height: 1;
+    letter-spacing: 0.05em;
+    color: #d9d4cd;
+    text-decoration: none;
+  }
+  .wm:hover {
+    color: #ffffff;
+  }
+
+  /* invisible final word keeps the layout still and centered */
+  .tw {
+    position: relative;
+    padding-right: 0.16em;
+  }
+  .ghost {
+    visibility: hidden;
+  }
+  /* typed layer grows from the left, caret follows the last key */
+  .typed {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+  }
+
+  .key {
+    display: inline-block;
+    max-width: 0;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(var(--y));
+    animation: strike 0.08s ease-out var(--d) forwards;
+  }
+  .key.del {
+    animation:
+      strike 0.08s ease-out var(--d) forwards,
+      erase 0.01s linear var(--e) forwards;
+  }
+  @keyframes strike {
+    from { max-width: 0; opacity: 0; transform: translateY(calc(var(--y) - 3px)); }
+    1% { max-width: 1em; }
+    to { max-width: 1em; opacity: var(--o); transform: translateY(var(--y)); }
+  }
+  @keyframes erase {
+    to { max-width: 0; opacity: 0; }
+  }
+
+  /* blinks while typing, twice more at the end, then leaves */
+  .caret {
+    width: 0.08em;
+    height: 0.9em;
+    margin-left: 0.08em;
+    background: #d9d4cd;
+    animation: caret 6.4s steps(1, end) forwards;
+  }
+  /* on/off every 0.4s (16 phases), ends off */
+  @keyframes caret {
+    0% { opacity: 1; }
+    6.25% { opacity: 0; }
+    12.5% { opacity: 1; }
+    18.75% { opacity: 0; }
+    25% { opacity: 1; }
+    31.25% { opacity: 0; }
+    37.5% { opacity: 1; }
+    43.75% { opacity: 0; }
+    50% { opacity: 1; }
+    56.25% { opacity: 0; }
+    62.5% { opacity: 1; }
+    68.75% { opacity: 0; }
+    75% { opacity: 1; }
+    81.25% { opacity: 0; }
+    87.5% { opacity: 1; }
+    93.75% { opacity: 0; }
+    100% { opacity: 0; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .key {
+      max-width: 1em;
+      opacity: var(--o);
+    }
+    .key.del,
+    .caret {
+      display: none;
+    }
+  }
+</style>

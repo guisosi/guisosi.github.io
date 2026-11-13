@@ -1,0 +1,56 @@
+---
+interface Props {
+  title?: string;
+}
+const { title = 'bash' } = Astro.props;
+---
+
+<div class="term">
+  <div class="term__tabs" aria-hidden="true">
+    <span class="tab tab--on">{title}</span>
+    <span class="tab">+</span>
+  </div>
+  <div class="term__body">
+    <slot />
+  </div>
+</div>
+
+<style>
+  /* terminal emulator tab on top */
+  .term {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    font-size: 0.9rem;
+  }
+  .term__tabs {
+    display: flex;
+    gap: 2px;
+  }
+  .tab {
+    padding: 5px 14px;
+    border: 1px solid var(--line);
+    border-bottom: 0;
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+  .tab--on {
+    position: relative;
+    z-index: 1;
+    margin-bottom: -1px;
+    padding-bottom: 6px;
+    border-top: 2px solid var(--blood);
+    background: var(--bg);
+    color: var(--text);
+  }
+  .term__body {
+    flex: 1;
+    display: grid;
+    align-content: start;
+    gap: 2px;
+    padding: 18px 20px 22px;
+    border: 1px solid var(--line);
+    background: var(--bg);
+    overflow-x: auto;
+  }
+</style>

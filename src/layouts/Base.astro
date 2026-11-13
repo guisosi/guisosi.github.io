@@ -1,0 +1,190 @@
+---
+import '../styles/global.css';
+import Banner from '../components/Banner.astro';
+import { sections, sectionKeys, shortName } from '../lib/sections';
+import { profile } from '../data/profile';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { title, description = 'guisosi. Red team research, write-ups, labs and tools.' } = Astro.props;
+const pageTitle = title ? `${title} | guisosi` : 'guisosi';
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const current = Astro.url.pathname.split('/')[1];
+
+// static site, no third parties
+const csp = [
+  "default-src 'self'",
+  "script-src 'self'",
+  "style-src 'self' 'unsafe-inline'",
+  "img-src 'self' data:",
+  "font-src 'self'",
+  "connect-src 'self'",
+  "object-src 'none'",
+  "base-uri 'self'",
+  "form-action 'none'",
+].join('; ');
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    {import.meta.env.PROD && <meta http-equiv="Content-Security-Policy" content={csp} />}
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta name="theme-color" content="#080808" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={new URL('/og.jpg', Astro.site)} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+  </head>
+  <body>
+    <svg class="defs" width="0" height="0" aria-hidden="true">
+      <filter id="distress">
+        <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="1" seed="2"></feTurbulence>
+        <feDisplacementMap in="SourceGraphic" scale="2.6"></feDisplacementMap>
+      </filter>
+    </svg>
+    <a class="skip sr-only" href="#content">skip to content</a>
+
+    <div class="topbar">
+      <div class="wrap topbar__inner">
+        <a href="/">GUISOSI</a>
+        <span>{profile.tagline.replace('// ', '')}</span>
+      </div>
+    </div>
+
+    <header class="masthead">
+      <div class="wrap">
+        <Banner />
+        <p class="motto">* i break in so they can't. *</p>
+        <nav aria-label="main">
+          <ul>
+            <li><a href="/" aria-current={current === '' ? 'page' : undefined}>About</a></li>
+            {
+              sectionKeys.map((s) => (
+                <li>
+                  <a href={`/${s}/`} title={sections[s].name} aria-current={current === s ? 'page' : undefined}>
+                    {shortName(s)}
+                  </a>
+                </li>
+              ))
+            }
+            <li><a href={profile.github} rel="me noopener">GitHub ↗</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main id="content">
+      <slot />
+    </main>
+
+    <footer class="foot">
+      <div class="wrap foot__inner">
+        <p>All content is for study and for use in your own environments or with written authorization.</p>
+        <p><a class="muted" href={profile.github} rel="me noopener">guisosi</a></p>
+      </div>
+    </footer>
+  </body>
+</html>
+
+<style>
+  .skip:focus {
+    position: fixed;
+    top: 8px;
+    left: 8px;
+    width: auto;
+    height: auto;
+    clip: auto;
+    padding: 6px 10px;
+    background: var(--blood);
+    color: var(--text);
+    z-index: 10;
+  }
+  .topbar__inner {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding-top: 14px;
+    padding-bottom: 14px;
+    font-size: 0.7rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  .topbar a {
+    text-decoration: none;
+  }
+  .topbar span {
+    color: var(--muted);
+  }
+  .masthead {
+    padding-top: 28px;
+  }
+  .motto {
+    margin: 14px 0 28px;
+    text-align: center;
+    font-size: 0.8rem;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+  }
+  nav {
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+  nav ul {
+    display: flex;
+    gap: 0 30px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  nav a {
+    display: block;
+    padding: 14px 0 12px;
+    border-bottom: 2px solid transparent;
+    font-size: 0.85rem;
+    white-space: nowrap;
+    text-decoration: none;
+    color: var(--muted);
+  }
+  nav a:hover {
+    color: var(--text);
+  }
+  nav a[aria-current='page'] {
+    color: var(--text);
+    border-bottom-color: var(--blood);
+  }
+  .defs {
+    position: absolute;
+  }
+  .foot {
+    margin-top: 110px;
+  }
+  .foot__inner {
+    border-top: 1px solid var(--line);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 8px 24px;
+    padding-top: 26px;
+    padding-bottom: 32px;
+    font-size: 0.8rem;
+  }
+  .foot p {
+    margin: 0;
+  }
+</style>

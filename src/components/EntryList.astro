@@ -1,0 +1,101 @@
+---
+import StatusMark from './StatusMark.astro';
+import { fmtDate, shortName, type SectionKey } from '../lib/sections';
+import type { CollectionEntry } from 'astro:content';
+
+type Item = { section: SectionKey; entry: CollectionEntry<'research' | 'writeups' | 'labs' | 'tools'> };
+
+interface Props {
+  items: Item[];
+  showSection?: boolean;
+}
+const { items, showSection = false } = Astro.props;
+---
+
+{
+  items.length === 0 ? (
+    <p class="empty muted">Nothing here yet. Still learning.</p>
+  ) : (
+    <ol class="entries">
+      {items.map(({ section, entry }) => {
+        const href = `/${section}/${entry.id}/`;
+        return (
+          <li class="entry">
+            <div class="entry__side">
+              <time datetime={entry.data.date.toISOString()}>{fmtDate(entry.data.date)}</time>
+              {showSection && <span class="muted">{shortName(section)}</span>}
+              <StatusMark status={entry.data.status} />
+            </div>
+            <div class="entry__main">
+              <h3>
+                <a href={href}>{entry.data.title}</a>
+                {entry.data.draft && <span class="tag">draft</span>}
+              </h3>
+              <p class="muted">{entry.data.description}</p>
+              <a class="entry__more" href={href}>
+                Read more
+              </a>
+            </div>
+          </li>
+        );
+      })}
+    </ol>
+  )
+}
+
+<style>
+  .entries {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--line);
+  }
+  .entry {
+    display: grid;
+    grid-template-columns: 170px 1fr;
+    gap: 24px;
+    padding: 30px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .entry__side {
+    display: grid;
+    align-content: start;
+    gap: 6px;
+    font-size: 0.78rem;
+  }
+  .entry h3 {
+    margin: 0 0 10px;
+    font-size: 1.15rem;
+    letter-spacing: -0.02em;
+  }
+  .entry h3 a {
+    text-decoration: none;
+  }
+  .entry h3 .tag {
+    margin-left: 8px;
+  }
+  .entry p {
+    margin: 0 0 14px;
+    font-size: 0.9rem;
+  }
+  .entry__more {
+    font-size: 0.82rem;
+  }
+  .empty {
+    padding: 28px 0;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+  @media (max-width: 640px) {
+    .entry {
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+    .entry__side {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px 14px;
+    }
+  }
+</style>

@@ -1,0 +1,27 @@
+---
+import Base from '../layouts/Base.astro';
+import Terminal from '../components/Terminal.astro';
+import Prompt from '../components/Prompt.astro';
+---
+
+<Base title="Lost in the dark">
+  <div class="wrap narrow lost">
+    <span class="kicker">404</span>
+    <h1>Lost in <em>the dark.</em></h1>
+    <p class="lead muted">This page was never here, or someone already cut the strings.</p>
+    <Terminal>
+      <Prompt cmd={`cd ${Astro.url.pathname}`} />
+      <div class="muted">bash: cd: no such file or directory</div>
+    </Terminal>
+    <div class="btns"><a class="btn" href="/">Back to the light</a></div>
+  </div>
+</Base>
+
+<style>
+  .lost {
+    padding-top: 64px;
+  }
+  .lead {
+    margin: 20px 0 30px;
+  }
+</style>

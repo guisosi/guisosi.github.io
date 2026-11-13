@@ -1,0 +1,26 @@
+---
+import { profile } from '../data/profile';
+
+interface Props {
+  cmd: string;
+}
+const { cmd } = Astro.props;
+---
+
+<div class="prompt">
+  <span class="prompt__user">{profile.handle}@{profile.host}</span><span class="prompt__sep">:~$ </span><span
+    class="prompt__cmd">{cmd}</span
+  >
+</div>
+
+<style>
+  .prompt {
+    color: var(--text);
+  }
+  .prompt__user {
+    color: var(--blood);
+  }
+  .prompt__sep {
+    color: var(--muted);
+  }
+</style>
