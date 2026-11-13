@@ -2,6 +2,12 @@
 // wordmark typed on a worn typewriter: "guilh", backspace, "sosi"
 import '@fontsource/special-elite';
 
+interface Props {
+  // typing animation only where it makes sense (home)
+  animate?: boolean;
+}
+const { animate = false } = Astro.props;
+
 const step = 0.35;
 let seed = 11;
 const rnd = () => ((seed = (seed * 9301 + 49297) % 233280) / 233280);
@@ -25,7 +31,7 @@ for (const c of 'sosi') {
 const keys = seq.map((k) => ({ ...k, y: (rnd() - 0.5) * 2, o: 0.82 + rnd() * 0.18 }));
 ---
 
-<a href="/" class="wm" aria-label="guisosi, home">
+<a href="/" class:list={['wm', { 'wm--still': !animate }]} aria-label="guisosi, home">
   <span class="tw" aria-hidden="true">
     <span class="ghost">guisosi</span>
     <span class="typed">
@@ -128,6 +134,17 @@ const keys = seq.map((k) => ({ ...k, y: (rnd() - 0.5) * 2, o: 0.82 + rnd() * 0.1
     87.5% { opacity: 1; }
     93.75% { opacity: 0; }
     100% { opacity: 0; }
+  }
+
+  /* other pages: name already typed, no replay */
+  .wm--still .key {
+    max-width: 1em;
+    opacity: var(--o);
+    animation: none;
+  }
+  .wm--still .key.del,
+  .wm--still .caret {
+    display: none;
   }
 
   @media (prefers-reduced-motion: reduce) {
