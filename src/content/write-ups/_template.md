@@ -27,7 +27,3 @@ What was found and how.
 ## Objective
 
 ## Lessons
-
-## Blue side: how to detect
-
-Logs, event IDs and detection ideas for each step above.
