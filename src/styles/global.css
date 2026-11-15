@@ -273,6 +273,184 @@ a:hover {
   margin: 2.5em 0;
 }
 
+/* post figures: plain html inside markdown, no js */
+.fig {
+  margin: 2em 0;
+}
+.fig__cap {
+  margin-top: 10px;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+/* recon flow */
+.flow {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 22px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.flow li {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+.flow li:not(:last-child)::after {
+  content: '→';
+  position: absolute;
+  top: 50%;
+  right: -18px;
+  transform: translateY(-50%);
+  color: var(--blood);
+}
+.flow li:last-child {
+  border-color: var(--blood);
+}
+.flow b {
+  color: var(--text);
+  font-size: 0.9rem;
+}
+.flow__n {
+  color: var(--blood);
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+}
+.flow code {
+  align-self: flex-start;
+  font-size: 0.75rem;
+}
+@media (max-width: 760px) {
+  .flow {
+    grid-template-columns: 1fr;
+  }
+  .flow li:not(:last-child)::after {
+    content: '↓';
+    top: auto;
+    right: auto;
+    bottom: -21px;
+    left: 50%;
+    transform: none;
+  }
+}
+
+/* jpeg anatomy, the radios switch the state */
+.anatomy {
+  position: relative;
+}
+.anatomy__tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.anatomy__tabs label {
+  padding: 6px 12px;
+  border: 1px solid var(--line);
+  font-size: 0.8rem;
+  color: var(--muted);
+  cursor: pointer;
+}
+.anatomy__tabs label:hover {
+  color: var(--text);
+}
+#jpg-orig:focus-visible ~ .anatomy__tabs [for='jpg-orig'],
+#jpg-exif:focus-visible ~ .anatomy__tabs [for='jpg-exif'],
+#jpg-magick:focus-visible ~ .anatomy__tabs [for='jpg-magick'] {
+  outline: 2px solid var(--ember);
+  outline-offset: 2px;
+}
+#jpg-orig:checked ~ .anatomy__tabs [for='jpg-orig'],
+#jpg-exif:checked ~ .anatomy__tabs [for='jpg-exif'],
+#jpg-magick:checked ~ .anatomy__tabs [for='jpg-magick'] {
+  border-color: var(--blood);
+  color: var(--text);
+}
+.anatomy__segs {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border: 1px solid var(--line);
+}
+.seg {
+  display: grid;
+  grid-template-columns: 9.5em 1fr auto;
+  grid-template-areas: 'name desc tag';
+  gap: 4px 16px;
+  align-items: baseline;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--line);
+  border-left: 2px solid transparent;
+  font-size: 0.8rem;
+  color: var(--muted);
+  transition: opacity 0.2s;
+}
+.seg:last-child {
+  border-bottom: 0;
+}
+.seg b {
+  grid-area: name;
+  color: var(--text);
+  font-weight: 400;
+}
+.seg__desc {
+  grid-area: desc;
+}
+.seg__tag {
+  grid-area: tag;
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--blood);
+  visibility: hidden;
+}
+#jpg-orig:checked ~ .anatomy__segs .seg--meta {
+  border-left: 2px solid var(--blood);
+}
+#jpg-exif:checked ~ .anatomy__segs .seg--meta :is(b, .seg__desc),
+#jpg-magick:checked ~ .anatomy__segs .seg--meta :is(b, .seg__desc) {
+  opacity: 0.35;
+  text-decoration: line-through;
+}
+#jpg-exif:checked ~ .anatomy__segs .seg--meta .seg__tag,
+#jpg-magick:checked ~ .anatomy__segs .seg--meta .seg__tag,
+#jpg-magick:checked ~ .anatomy__segs .seg--sig .seg__tag {
+  visibility: visible;
+}
+#jpg-magick:checked ~ .anatomy__segs .seg--sig .seg__tag::before {
+  content: 'replaced';
+}
+.seg--meta .seg__tag::before {
+  content: 'gone';
+}
+.seg--sig,
+.seg--pix {
+  border-left: 2px solid var(--ember);
+}
+.anatomy__note {
+  display: none;
+  margin: 12px 0 0;
+  font-size: 0.85rem;
+}
+#jpg-orig:checked ~ .note-orig,
+#jpg-exif:checked ~ .note-exif,
+#jpg-magick:checked ~ .note-magick {
+  display: block;
+}
+@media (max-width: 560px) {
+  .seg {
+    grid-template-columns: 1fr auto;
+    grid-template-areas: 'name tag' 'desc desc';
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
