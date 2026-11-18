@@ -21,6 +21,9 @@ const entry = z.object({
   attack: z.array(z.string().regex(/^T\d{4}(\.\d{3})?$/)).default([]),
   status: z.enum(statuses).default('writing'),
   draft: z.boolean().default(false),
+  // pinned on the home page
+  featured: z.boolean().default(false),
+  repo: z.string().url().optional(),
 });
 
 // files starting with _ are ignored (templates)

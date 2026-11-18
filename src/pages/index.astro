@@ -6,9 +6,10 @@ import EntryList from '../components/EntryList.astro';
 import Pulse from '../components/Pulse.astro';
 import CamFrame from '../components/CamFrame.astro';
 import { profile, roadmap, projects } from '../data/profile';
-import { sections, sectionKeys, getLatest } from '../lib/sections';
+import { sections, sectionKeys, getLatest, getFeatured, fmtDate } from '../lib/sections';
 
 const latest = await getLatest(5);
+const featured = await getFeatured();
 const statusLabel = { done: 'done', wip: 'in progress', next: 'next', goal: 'goal' };
 ---
 
@@ -104,6 +105,37 @@ const statusLabel = { done: 'done', wip: 'in progress', next: 'next', goal: 'goa
       }
     </div>
   </section>
+
+  {
+    featured && (
+      <section class="wrap block">
+        <span class="kicker">case file</span>
+        <article class="featured">
+          <div class="featured__text">
+            <p class="featured__meta muted">
+              {fmtDate(featured.entry.data.date)} · {sections[featured.section].type}
+            </p>
+            <h2>
+              <a href={`/${featured.section}/${featured.entry.id}/`}>{featured.entry.data.title}</a>
+            </h2>
+            <p class="muted">{featured.entry.data.description}</p>
+            <p class="featured__go">
+              <a class="btn" href={`/${featured.section}/${featured.entry.id}/`}>Read the research</a>
+              {featured.entry.data.repo && (
+                <a class="btn btn--ghost" href={featured.entry.data.repo} rel="noopener">Repo ↗</a>
+              )}
+            </p>
+          </div>
+          <a class="featured__art" href={`/${featured.section}/${featured.entry.id}/`} tabindex="-1" aria-hidden="true">
+            <picture>
+              <source media="(max-width: 560px)" srcset={`/img/posts/${featured.entry.id}/killchain-tall.svg`} width="400" height="532" />
+              <img src={`/img/posts/${featured.entry.id}/killchain-wide.svg`} alt="" loading="lazy" width="760" height="500" />
+            </picture>
+          </a>
+        </article>
+      </section>
+    )
+  }
 
   <section class="wrap block">
     <div class="head-row">
@@ -208,6 +240,44 @@ const statusLabel = { done: 'done', wip: 'in progress', next: 'next', goal: 'goa
     letter-spacing: 0.2em;
     color: #d0c8c4;
     text-shadow: 0 1px 6px #000;
+  }
+  .featured {
+    display: grid;
+    grid-template-columns: 1fr 1.15fr;
+    gap: 32px;
+    align-items: center;
+    margin-top: 18px;
+    padding: 28px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+  }
+  .featured h2 {
+    margin: 6px 0 12px;
+  }
+  .featured h2 a {
+    text-decoration: none;
+  }
+  .featured__meta {
+    margin: 0;
+    font-size: 0.78rem;
+  }
+  .featured__go {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 20px 0 0;
+  }
+  .featured__art img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 1px solid var(--line);
+  }
+  @media (max-width: 860px) {
+    .featured {
+      grid-template-columns: 1fr;
+      padding: 20px;
+    }
   }
   .block {
     margin-top: 110px;

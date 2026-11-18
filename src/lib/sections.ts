@@ -2,24 +2,28 @@ import { getCollection } from 'astro:content';
 
 export const sections = {
   research: {
+    type: 'research',
     collection: 'research',
     name: 'The Observatory',
     kicker: 'research & deep dives',
     blurb: 'Deep dives, notes and whatever I am digging into.',
   },
   'write-ups': {
+    type: 'writeup',
     collection: 'writeups',
     name: 'The Hunts',
     kicker: 'boxes, ctfs & labs',
     blurb: 'Machines and challenges, start to finish. Retired boxes only.',
   },
   labs: {
+    type: 'lab',
     collection: 'labs',
     name: 'The Altar',
     kicker: 'built to be broken',
     blurb: 'Environments I build to break and to defend.',
   },
   tools: {
+    type: 'tool',
     collection: 'tools',
     name: 'The Armory',
     kicker: 'pocs, scripts & tooling',
@@ -54,3 +58,8 @@ export async function getLatest(limit = 5) {
 }
 
 export const fmtDate = (d: Date) => d.toISOString().slice(0, 10);
+
+
+export async function getFeatured() {
+  return (await getLatest(100)).find(({ entry }) => entry.data.featured);
+}

@@ -5,6 +5,8 @@ date: 2026-11-15
 tags: [malware, infostealer, electron, credential-access, sandbox]
 attack: [T1204.002, T1497.001, T1012, T1082, T1016, T1059.003, T1059.001, T1027.010, T1564.003, T1555.003, T1539, T1567.004]
 status: finished
+featured: true
+repo: https://github.com/guisosi/mavi-chivas
 ---
 
 > Sandbox only. No sample is hosted here and every network indicator is defanged.

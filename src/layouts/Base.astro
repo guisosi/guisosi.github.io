@@ -39,6 +39,7 @@ const csp = [
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="alternate" type="application/rss+xml" title="guisosi" href="/rss.xml" />
     <meta name="theme-color" content="#080808" />
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={description} />
@@ -94,7 +95,11 @@ const csp = [
     <footer class="foot">
       <div class="wrap foot__inner">
         <p>All content is for study and for use in your own environments or with written authorization.</p>
-        <p><a class="muted" href={profile.github} rel="me noopener">guisosi</a></p>
+        <p class="elsewhere">
+          <a class="muted" href={profile.github} rel="me noopener">github</a>
+          <span aria-hidden="true">·</span>
+          <a class="muted" href="/rss.xml">rss</a>
+        </p>
       </div>
     </footer>
   </body>
@@ -186,5 +191,9 @@ const csp = [
   }
   .foot p {
     margin: 0;
+  }
+  .elsewhere span {
+    margin: 0 8px;
+    color: var(--blood);
   }
 </style>
