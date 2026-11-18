@@ -1,0 +1,43 @@
+---
+import Base from '../layouts/Base.astro';
+import EntryList from '../components/EntryList.astro';
+import { sec, getEntries, type SectionKey } from '../lib/sections';
+import { useT, type Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+  section: SectionKey;
+}
+const { lang, section } = Astro.props;
+const t = useT(lang);
+const { name, kicker, blurb } = sec(section, lang);
+const items = (await getEntries(section, lang)).map((entry) => ({ section, entry }));
+---
+
+<Base title={name} description={blurb} lang={lang}>
+  <div class="wrap">
+    <header class="head">
+      <span class="kicker">{kicker}</span>
+      <h1 class="poster">{name}</h1>
+      <p class="lead">{blurb}</p>
+      <p class="muted count">{items.length} {items.length === 1 ? t('list.entry') : t('list.entries')} · /{section}</p>
+    </header>
+    <EntryList items={items} lang={lang} />
+  </div>
+</Base>
+
+<style>
+  .head {
+    padding: 64px 0 40px;
+  }
+  h1 {
+    font-size: clamp(2.6rem, 9vw, 5.2rem);
+  }
+  .lead {
+    margin: 22px 0 0;
+  }
+  .count {
+    font-size: 0.78rem;
+    margin: 18px 0 0;
+  }
+</style>

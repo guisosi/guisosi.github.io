@@ -1,0 +1,19 @@
+---
+import Post from '../../../views/Post.astro';
+import { sectionKeys, getEntries, slugOf } from '../../../lib/sections';
+
+export async function getStaticPaths() {
+  const paths = [];
+  for (const section of sectionKeys) {
+    const entries = await getEntries(section, 'pt');
+    // oldest entry is file 001
+    entries.forEach((entry, i) => {
+      const file = String(entries.length - i).padStart(3, '0');
+      paths.push({ params: { section, slug: slugOf(entry) }, props: { section, entry, file } });
+    });
+  }
+  return paths;
+}
+---
+
+<Post lang="pt" {...Astro.props} />

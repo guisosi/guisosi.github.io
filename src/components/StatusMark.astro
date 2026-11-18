@@ -1,13 +1,16 @@
 ---
-import { statusLabel, type Status } from '../content.config';
+import type { Status } from '../content.config';
+import { useT, type Lang } from '../i18n/ui';
 
 interface Props {
   status: Status;
+  lang?: Lang;
 }
-const { status } = Astro.props;
+const { status, lang = 'en' } = Astro.props;
+const t = useT(lang);
 ---
 
-<span class={`sm sm--${status}`}>{statusLabel[status]}</span>
+<span class={`sm sm--${status}`}>{t(`status.${status}`)}</span>
 
 <style>
   /* plain ink, like a note on a file */

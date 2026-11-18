@@ -1,39 +1,41 @@
 ---
 import StatusMark from './StatusMark.astro';
-import { fmtDate, shortName, type SectionKey } from '../lib/sections';
-import type { CollectionEntry } from 'astro:content';
+import { fmtDate, shortName, slugOf, type SectionKey, type Entry } from '../lib/sections';
+import { useT, localize, type Lang } from '../i18n/ui';
 
-type Item = { section: SectionKey; entry: CollectionEntry<'research' | 'writeups' | 'labs' | 'tools'> };
+type Item = { section: SectionKey; entry: Entry };
 
 interface Props {
   items: Item[];
+  lang?: Lang;
   showSection?: boolean;
 }
-const { items, showSection = false } = Astro.props;
+const { items, lang = 'en', showSection = false } = Astro.props;
+const t = useT(lang);
 ---
 
 {
   items.length === 0 ? (
-    <p class="empty muted">Nothing here yet. Still learning.</p>
+    <p class="empty muted">{t('list.empty')}</p>
   ) : (
     <ol class="entries">
       {items.map(({ section, entry }) => {
-        const href = `/${section}/${entry.id}/`;
+        const href = localize(lang, `/${section}/${slugOf(entry)}/`);
         return (
           <li class="entry">
             <div class="entry__side">
               <time datetime={entry.data.date.toISOString()}>{fmtDate(entry.data.date)}</time>
-              {showSection && <span class="muted">{shortName(section)}</span>}
-              <StatusMark status={entry.data.status} />
+              {showSection && <span class="muted">{shortName(section, lang)}</span>}
+              <StatusMark status={entry.data.status} lang={lang} />
             </div>
             <div class="entry__main">
               <h3>
                 <a href={href}>{entry.data.title}</a>
-                {entry.data.draft && <span class="tag">draft</span>}
+                {entry.data.draft && <span class="tag">{t('status.draft')}</span>}
               </h3>
               <p class="muted">{entry.data.description}</p>
               <a class="entry__more" href={href}>
-                Read more
+                {t('list.more')}
               </a>
             </div>
           </li>

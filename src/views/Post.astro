@@ -1,0 +1,215 @@
+---
+import { render } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import StatusMark from '../components/StatusMark.astro';
+import Pulse from '../components/Pulse.astro';
+import { sec, fmtDate, isTranslated, type SectionKey, type Entry } from '../lib/sections';
+import { useT, localize, type Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+  section: SectionKey;
+  entry: Entry;
+  file: string;
+}
+const { lang, section, entry, file } = Astro.props;
+const t = useT(lang);
+const { Content } = await render(entry);
+const { title, description, date, updated, tags, attack, status, draft } = entry.data;
+const { name } = sec(section, lang);
+const back = localize(lang, `/${section}/`);
+const untranslated = !isTranslated(entry, lang);
+
+const attackUrl = (id: string) => `https://attack.mitre.org/techniques/${id.replace('.', '/')}/`;
+const stamp = draft ? t('status.draft') : t(`status.${status}`);
+
+// torn bottom edge
+let seed = [...entry.id.replace(/^pt\//, '')].reduce((a, c) => a + c.charCodeAt(0), 0);
+const rand = () => ((seed = (seed * 9301 + 49297) % 233280) / 233280);
+const steps = 28;
+const edge = Array.from({ length: steps + 1 }, (_, i) => `${(i / steps) * 100}% ${96 + rand() * 4}%`);
+const torn = `polygon(0 0, 100% 0, ${edge.reverse().join(', ')})`;
+---
+
+<Base title={title} description={description} lang={lang}>
+  <article class="wrap narrow">
+    <a class="back" href={back}>← {name}</a>
+
+    <header class="dossier" style={`clip-path:${torn}`}>
+      <div class="dossier__top">
+        <span>{t('post.file')} {file}</span>
+        <span>{name}</span>
+        <span>{fmtDate(date)}</span>
+      </div>
+      <span class={`stamp stamp--${draft ? 'draft' : status}`}>{stamp}</span>
+      <h1 class="poster">{title}</h1>
+      <p class="dossier__desc">{description}</p>
+      <dl class="dossier__meta">
+        <div><dt>{t('post.operator')}</dt><dd>guisosi</dd></div>
+        <div><dt>{t('post.status')}</dt><dd><StatusMark status={status} lang={lang} /></dd></div>
+        {updated && <div><dt>{t('post.updated')}</dt><dd>{fmtDate(updated)}</dd></div>}
+        {tags.length > 0 && <div><dt>{t('post.tags')}</dt><dd>{tags.join(' · ')}</dd></div>}
+      </dl>
+      {
+        attack.length > 0 && (
+          <p class="ttps">
+            <span>TTPs:</span>
+            {attack.map((id) => (
+              <a href={attackUrl(id)} rel="noopener" title="MITRE ATT&CK">
+                {id}
+              </a>
+            ))}
+          </p>
+        )
+      }
+    </header>
+
+    {untranslated && <p class="untranslated" lang="pt-BR">{t('post.untranslated')}</p>}
+    <div class="prose" lang={untranslated ? 'en' : undefined}>
+      <Content />
+    </div>
+
+    <Pulse />
+    <p class="end"><span class="kicker">{t('post.end')} {file}</span><a href={back}>← {t('post.back')} {name}</a></p>
+  </article>
+</Base>
+
+<style>
+  .back {
+    display: inline-block;
+    margin: 48px 0 22px;
+    font-size: 0.82rem;
+  }
+
+  /* case file on aged paper */
+  .dossier {
+    position: relative;
+    padding: 26px 30px 54px;
+    margin-bottom: 44px;
+    color: var(--ink);
+    background:
+      repeating-linear-gradient(to bottom, transparent 0 27px, rgb(27 21 21 / 0.06) 27px 28px),
+      radial-gradient(ellipse at 30% 20%, rgb(255 255 255 / 0.25), transparent 60%),
+      radial-gradient(ellipse at 90% 100%, rgb(90 50 30 / 0.25), transparent 55%),
+      var(--paper);
+  }
+  .dossier::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.35;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='p'><feTurbulence type='fractalNoise' baseFrequency='.6' numOctaves='4' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .35  0 0 0 0 .25  0 0 0 0 .18  0 0 0 .9 0'/></filter><rect width='100%' height='100%' filter='url(%23p)'/></svg>");
+  }
+  .dossier__top {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 6px 16px;
+    padding-bottom: 10px;
+    margin-bottom: 30px;
+    border-bottom: 2px solid var(--ink);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+  .stamp {
+    position: absolute;
+    top: 62px;
+    right: 24px;
+    padding: 4px 12px;
+    border: 3px double currentColor;
+    color: #a3161c;
+    font-weight: 700;
+    font-size: 0.95rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    transform: rotate(-8deg);
+    opacity: 0.85;
+    filter: url(#distress);
+  }
+  .stamp--draft,
+  .stamp--writing,
+  .stamp--finished {
+    color: #4a3c34;
+  }
+  .dossier h1 {
+    max-width: 88%;
+    margin: 0;
+    font-size: clamp(2rem, 6vw, 3.4rem);
+    color: var(--ink);
+  }
+  .dossier__desc {
+    margin: 18px 0 0;
+    max-width: 560px;
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 1.1rem;
+  }
+  .dossier__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 34px;
+    margin: 26px 0 0;
+    padding-top: 14px;
+    border-top: 1px dashed rgb(27 21 21 / 0.5);
+    font-size: 0.82rem;
+  }
+  .dossier__meta dt {
+    font-size: 0.64rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    opacity: 0.7;
+  }
+  .dossier__meta dd {
+    margin: 0;
+    font-weight: 700;
+  }
+  .ttps {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 12px;
+    margin: 16px 0 0;
+    font-size: 0.8rem;
+  }
+  .ttps span {
+    opacity: 0.7;
+  }
+  .ttps a {
+    color: #a3161c;
+    font-weight: 700;
+    text-decoration-color: #a3161c;
+  }
+  .untranslated {
+    margin: 0 0 32px;
+    padding: 12px 16px;
+    border-left: 2px solid var(--blood);
+    background: var(--surface);
+    font-size: 0.88rem;
+  }
+  .end {
+    display: grid;
+    justify-items: center;
+    gap: 6px;
+    margin-top: 24px;
+    font-size: 0.85rem;
+  }
+  .end .kicker {
+    margin: 0;
+  }
+  @media (max-width: 560px) {
+    .dossier {
+      padding: 20px 18px 46px;
+    }
+    .stamp {
+      position: static;
+      display: inline-block;
+      margin-bottom: 14px;
+    }
+    .dossier h1 {
+      max-width: none;
+    }
+  }
+</style>

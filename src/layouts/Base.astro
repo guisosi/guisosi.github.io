@@ -1,18 +1,27 @@
 ---
 import '../styles/global.css';
 import Banner from '../components/Banner.astro';
-import { sections, sectionKeys, shortName } from '../lib/sections';
+import { sec, sectionKeys, shortName } from '../lib/sections';
 import { profile } from '../data/profile';
+import { useT, localize, unlocalize, htmlLang, ogLocale, type Lang } from '../i18n/ui';
 
 interface Props {
   title?: string;
   description?: string;
+  lang?: Lang;
+  // pages without a twin in the other language (404)
+  single?: boolean;
 }
 
-const { title, description = 'guisosi. Red team research, write-ups, labs and tools.' } = Astro.props;
+const { lang = 'en', single = false } = Astro.props;
+const t = useT(lang);
+const { title, description = t('site.description') } = Astro.props;
 const pageTitle = title ? `${title} | guisosi` : 'guisosi';
 const canonical = new URL(Astro.url.pathname, Astro.site);
-const current = Astro.url.pathname.split('/')[1];
+const base = unlocalize(Astro.url.pathname);
+const current = base.split('/')[1];
+const L = (p: string) => localize(lang, p);
+const alt = { en: base, pt: localize('pt', base) };
 
 // static site, no third parties
 const csp = [
@@ -29,7 +38,7 @@ const csp = [
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={htmlLang[lang]}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -38,12 +47,23 @@ const csp = [
     <title>{pageTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
+    {
+      !single && (
+        <>
+          <link rel="alternate" hreflang="en" href={new URL(alt.en, Astro.site)} />
+          <link rel="alternate" hreflang="pt-BR" href={new URL(alt.pt, Astro.site)} />
+          <link rel="alternate" hreflang="x-default" href={new URL(alt.en, Astro.site)} />
+          <script is:inline src="/lang.js"></script>
+        </>
+      )
+    }
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="alternate" type="application/rss+xml" title="guisosi" href="/rss.xml" />
     <meta name="theme-color" content="#080808" />
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
+    <meta property="og:locale" content={ogLocale[lang]} />
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={new URL('/og.jpg', Astro.site)} />
     <meta property="og:image:width" content="1200" />
@@ -57,12 +77,21 @@ const csp = [
         <feDisplacementMap in="SourceGraphic" scale="2.6"></feDisplacementMap>
       </filter>
     </svg>
-    <a class="skip sr-only" href="#content">skip to content</a>
+    <a class="skip sr-only" href="#content">{t('site.skip')}</a>
 
     <div class="topbar">
       <div class="wrap topbar__inner">
-        <a href="/">GUISOSI</a>
-        <span>{profile.tagline.replace('// ', '')}</span>
+        <a href={L('/')}>GUISOSI</a>
+        <span class="topbar__tag">{t('site.tagline')}</span>
+        {
+          !single && (
+            <span class="langs" role="group" aria-label={t('nav.lang')}>
+              <a href={alt.en} hreflang="en" lang="en" data-lang="en" aria-current={lang === 'en' ? 'true' : undefined}>EN</a>
+              <i aria-hidden="true">·</i>
+              <a href={alt.pt} hreflang="pt-BR" lang="pt-BR" data-lang="pt" aria-current={lang === 'pt' ? 'true' : undefined}>PT</a>
+            </span>
+          )
+        }
       </div>
     </div>
 
@@ -72,12 +101,12 @@ const csp = [
         <p class="motto">* i break in so they can't. *</p>
         <nav aria-label="main">
           <ul>
-            <li><a href="/" aria-current={current === '' ? 'page' : undefined}>About</a></li>
+            <li><a href={L('/')} aria-current={current === '' ? 'page' : undefined}>{t('nav.about')}</a></li>
             {
               sectionKeys.map((s) => (
                 <li>
-                  <a href={`/${s}/`} title={sections[s].name} aria-current={current === s ? 'page' : undefined}>
-                    {shortName(s)}
+                  <a href={L(`/${s}/`)} title={sec(s, lang).name} aria-current={current === s ? 'page' : undefined}>
+                    {shortName(s, lang)}
                   </a>
                 </li>
               ))
@@ -94,7 +123,7 @@ const csp = [
 
     <footer class="foot">
       <div class="wrap foot__inner">
-        <p>All content is for study and for use in your own environments or with written authorization.</p>
+        <p>{t('foot.legal')}</p>
         <p class="elsewhere">
           <a class="muted" href={profile.github} rel="me noopener">github</a>
           <span aria-hidden="true">·</span>
@@ -131,8 +160,36 @@ const csp = [
   .topbar a {
     text-decoration: none;
   }
-  .topbar span {
+  .topbar__tag {
+    flex: 1;
+    text-align: right;
     color: var(--muted);
+  }
+  .langs {
+    display: flex;
+    gap: 6px;
+  }
+  .langs a {
+    color: var(--muted);
+  }
+  .langs a:hover,
+  .langs a[aria-current] {
+    color: var(--text);
+  }
+  .langs a[aria-current] {
+    border-bottom: 1px solid var(--blood);
+  }
+  .langs i {
+    font-style: normal;
+    color: var(--blood);
+  }
+  @media (max-width: 560px) {
+    .topbar__tag {
+      display: none;
+    }
+    .langs {
+      margin-left: auto;
+    }
   }
   .masthead {
     padding-top: 28px;

@@ -33,3 +33,12 @@ export const projects = [
     tags: ['infra', 'blue team'],
   },
 ];
+
+// pt copy: only explanatory text, the rest stays in english
+export const pt = {
+  goal: ['Red Team Operator', 'simulando adversários em ambientes autorizados, de ponta a ponta'],
+  projects: [
+    'Análise de um infostealer disfarçado de mod de Minecraft.',
+    'Infra self-hosted com Caddy, CrowdSec, Prometheus, Grafana, Loki e Uptime Kuma. Observabilidade como código.',
+  ],
+};

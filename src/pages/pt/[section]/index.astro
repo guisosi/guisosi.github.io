@@ -1,0 +1,10 @@
+---
+import Section from '../../../views/Section.astro';
+import { sectionKeys, type SectionKey } from '../../../lib/sections';
+
+export function getStaticPaths() {
+  return sectionKeys.map((section) => ({ params: { section } }));
+}
+---
+
+<Section lang="pt" section={Astro.params.section as SectionKey} />
