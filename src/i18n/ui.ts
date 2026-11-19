@@ -86,30 +86,30 @@ type Dict = { [K in keyof typeof en]: (typeof en)[K] extends string[] ? string[]
 // pt only overrides what reads as text; names, slogans and file labels stay in english
 const pt: Dict = {
   ...(en as Dict),
-  'site.description': 'guisosi. Pesquisa de red team, write-ups, labs e tools.',
+  'site.description': 'guisosi. Pesquisa de _red team_, _write-ups_, _labs_ e _tools_.',
   'site.skip': 'pular para o conteúdo',
   'nav.about': 'Sobre',
   'nav.lang': 'idioma',
   'foot.legal': 'Todo o conteúdo é para estudo e para uso nos seus próprios ambientes ou com autorização por escrito.',
 
-  'home.small': 'Só código, anotações e a busca incansável de como as coisas quebram.',
+  'home.small': 'Só código, anotações e a busca incansável por entender como as coisas quebram.',
   'home.cta1': 'Entrar no Observatory',
   'home.cta2': 'Ler as Hunts',
   'home.art': 'Figura pintada puxando os fios de uma marionete',
   'home.read': 'Ler a pesquisa',
   'home.rules': [
-    'Tudo aqui roda nos meus próprios labs, em máquinas aposentadas ou com autorização por escrito.',
-    'Nada de dado de cliente. Nada de IP interno, hostname ou credencial. Nunca.',
+    'Tudo aqui roda nos meus próprios _labs_, em máquinas aposentadas ou com autorização por escrito.',
+    'Nada de dado de cliente. Nada de IP interno, _hostname_ ou credencial. Nunca.',
     'Provar o impacto. Levar só o que prova.',
   ],
 
-  'list.empty': 'Nada aqui ainda. Still learning.',
+  'list.empty': 'Nada aqui ainda. _Still learning._',
   'list.more': 'Ler mais',
   'list.entry': 'entrada',
   'list.entries': 'entradas',
 
   'post.back': 'voltar para',
-  'post.untranslated': 'Este post ainda não foi traduzido. Segue a versão em inglês.',
+  'post.untranslated': 'Este post ainda não foi traduzido. Abaixo, a versão em inglês.',
 };
 
 const dicts: Record<Lang, Dict> = { en: en as Dict, pt };
@@ -121,3 +121,9 @@ export function useT(lang: Lang) {
   }
   return t;
 }
+
+// _term_ marks a foreign word: <em> on the page, plain text in meta tags
+const esc = (s: string) => s.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
+const MARK = /(^|[^\w])_([^_]+?)_(?![\w])/g;
+export const rich = (s: string) => esc(s).replace(MARK, '$1<em>$2</em>');
+export const plain = (s: string) => s.replace(MARK, '$1$2');

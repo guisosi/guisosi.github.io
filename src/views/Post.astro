@@ -4,7 +4,7 @@ import Base from '../layouts/Base.astro';
 import StatusMark from '../components/StatusMark.astro';
 import Pulse from '../components/Pulse.astro';
 import { sec, fmtDate, isTranslated, type SectionKey, type Entry } from '../lib/sections';
-import { useT, localize, type Lang } from '../i18n/ui';
+import { useT, localize, rich, type Lang } from '../i18n/ui';
 
 interface Props {
   lang: Lang;
@@ -42,8 +42,8 @@ const torn = `polygon(0 0, 100% 0, ${edge.reverse().join(', ')})`;
         <span>{fmtDate(date)}</span>
       </div>
       <span class={`stamp stamp--${draft ? 'draft' : status}`}>{stamp}</span>
-      <h1 class="poster">{title}</h1>
-      <p class="dossier__desc">{description}</p>
+      <h1 class="poster" set:html={rich(title)} />
+      <p class="dossier__desc" set:html={rich(description)} />
       <dl class="dossier__meta">
         <div><dt>{t('post.operator')}</dt><dd>guisosi</dd></div>
         <div><dt>{t('post.status')}</dt><dd><StatusMark status={status} lang={lang} /></dd></div>
@@ -147,6 +147,10 @@ const torn = `polygon(0 0, 100% 0, ${edge.reverse().join(', ')})`;
     font-family: var(--font-serif);
     font-style: italic;
     font-size: 1.1rem;
+  }
+  /* the line is already italic, so the foreign word goes upright */
+  .dossier__desc :global(em) {
+    font-style: normal;
   }
   .dossier__meta {
     display: flex;

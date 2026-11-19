@@ -1,6 +1,6 @@
 ---
-title: 'mavi-chivas: o mod de Minecraft que rouba o seu navegador'
-description: Um mod falso de um servidor do Discord, um link do Dropbox e um stealer em Electron que mata o navegador para ler os segredos dele.
+title: 'mavi-chivas: o _mod_ de Minecraft que rouba o seu navegador'
+description: Um _mod_ falso de um servidor do Discord, um link do Dropbox e um _stealer_ em Electron que mata o navegador para ler os segredos dele.
 date: 2026-11-15
 tags: [malware, infostealer, electron, credential-access, sandbox]
 attack: [T1204.002, T1497.001, T1012, T1082, T1016, T1059.003, T1059.001, T1027.010, T1564.003, T1555.003, T1539, T1567.004]
@@ -9,15 +9,15 @@ featured: true
 repo: https://github.com/guisosi/mavi-chivas
 ---
 
-> Só sandbox. Nenhuma amostra é hospedada aqui e todo indicador de rede está defanged.
+> Só _sandbox_. Nenhuma amostra é hospedada aqui e todo indicador de rede está _defanged_.
 
-Uma das minhas primeiras olhadas de verdade em malware. Alguém compartilhou um "mod" de Minecraft num servidor do Discord. Em vez de rodar, eu mandei para uma sandbox. Era um infostealer, e bem feito.
+Uma das minhas primeiras análises reais de malware. Alguém compartilhou um "_mod_" de Minecraft num servidor do Discord. Em vez de executá-lo, enviei-o para uma _sandbox_. Era um _infostealer_, e bem feito.
 
-A execução é pública no ANY.RUN, e dá para achar pelo SHA256 no final. Tudo abaixo vem dela.
+A execução é pública no ANY.RUN, e pode ser encontrada pelo SHA256 no final. Tudo abaixo vem dela.
 
-## O lure
+## O _lure_
 
-Nenhum exploit. A entrega inteira é social: um jogo, uma comunidade que confia entre si e um arquivo que promete algo legal.
+Nenhum _exploit_. A entrega inteira é social: um jogo, uma comunidade cujos membros confiam uns nos outros e um arquivo que promete algo legal.
 
 O arquivo estava no Dropbox. Isso é uma escolha. Um domínio confiável quase nunca é bloqueado por proxy, e o download parece qualquer outro arquivo compartilhado.
 
@@ -31,9 +31,9 @@ O arquivo estava no Dropbox. Isso é uma escolha. Um domínio confiável quase n
 <figcaption class="fig__cap">Sem assinatura, editor desconhecido. A segunda e última chance de dizer não.</figcaption>
 </figure>
 
-Dois avisos, dois cliques. Para uma criança que quer o mod, isso não é atrito nenhum.
+Dois avisos, dois cliques. Para uma criança que quer o _mod_, isso não é atrito nenhum.
 
-## É uma web app
+## É um _web app_
 
 A primeira coisa que ele fez foi abrir várias janelas empilhadas de si mesmo.
 
@@ -42,9 +42,9 @@ A primeira coisa que ele fez foi abrir várias janelas empilhadas de si mesmo.
 <figcaption class="fig__cap">Janelas empilhadas do mesmo binário: a cara de um app Electron.</figcaption>
 </figure>
 
-Malware clássico em C não faz isso. Electron faz. Os arquivos que ele tocou confirmaram: `ref-napi` e `ffi-napi`, as bibliotecas Node.js que deixam o JavaScript chamar APIs nativas do Windows. É o caminho comum de um stealer em JavaScript chegar na DPAPI e descriptografar o que o navegador protege.
+Malware clássico em C não faz isso. Electron faz. Os arquivos que ele acessou confirmaram: `ref-napi` e `ffi-napi`, as bibliotecas Node.js que deixam o JavaScript chamar APIs nativas do Windows. É o caminho comum de um _stealer_ em JavaScript chegar à DPAPI e descriptografar o que o navegador protege.
 
-Algumas dessas bibliotecas vieram com builds de Linux dentro de uma amostra de Windows. Um pacote multiplataforma, em que só a parte do alvo chega a rodar. Na sandbox ele rodou como seis processos do mesmo binário.
+Algumas dessas bibliotecas vieram com _builds_ de Linux dentro de uma amostra de Windows. Um pacote multiplataforma, em que só a parte do alvo chega a rodar. Na _sandbox_ ele rodou como seis processos do mesmo binário.
 
 ## Olhar em volta antes de agir
 
@@ -54,19 +54,19 @@ Antes de roubar qualquer coisa, ele confere onde caiu:
 cmd.exe /d /s /c "reg query "HKLM\HARDWARE\DESCRIPTION\System""
 ```
 
-Essa chave guarda as strings da BIOS. Numa VM elas costumam dizer VirtualBox, VMware ou QEMU, então é uma checagem barata de sandbox. (T1497.001, T1012)
+Essa chave guarda as _strings_ da BIOS. Numa VM elas costumam dizer VirtualBox, VMware ou QEMU, então é uma checagem barata de _sandbox_. (T1497.001, T1012)
 
-Ele também lê o GUID da máquina, o nome do computador e a CPU, e pergunta o IP público para o `myexternalip[.]com`. (T1082, T1016)
+Ele também lê o GUID da máquina, o nome do computador e a CPU, e pergunta o IP público ao `myexternalip[.]com`. (T1082, T1016)
 
 ## Esconder a janela
 
-O PowerShell sobe seis vezes, sempre com todas as flags silenciosas que existem:
+O PowerShell é executado seis vezes, sempre com todas as _flags_ silenciosas que existem:
 
 ```text
 powershell -NoLogo -NonInteractive -NoProfile -ExecutionPolicy Bypass -Encoded WwBTAHkA...
 ```
 
-O que eu decodifiquei é um wrapper em volta de um segundo blob em Base64. Duas camadas, para isto:
+O que eu decodifiquei é um _wrapper_ em volta de um segundo _blob_ em Base64. Duas camadas, para isto:
 
 ```powershell
 Add-Type -Name Window -Namespace Console -MemberDefinition '
@@ -81,38 +81,38 @@ $consolePtr = [Console.Window]::GetConsoleWindow()
 [Console.Window]::ShowWindow($consolePtr, 0)
 ```
 
-O `Add-Type` compila esse C# na hora, e é por isso que o `csc.exe` aparece na árvore de processos, também seis vezes. O código em si é minúsculo: acha a janela do console e esconde, para a vítima nunca ver uma caixa preta piscar. (T1059.001, T1027.010, T1564.003)
+O `Add-Type` compila esse C# na hora, e é por isso que o `csc.exe` aparece na árvore de processos, também seis vezes. O código em si é minúsculo: acha a janela do console e a esconde, para a vítima nunca ver uma caixa preta piscar. (T1059.001, T1027.010, T1564.003)
 
-Visto de fora, PowerShell compilando C# assusta. Decodificado, é só higiene de stage.
+Visto de fora, PowerShell compilando C# assusta. Decodificado, é só higiene de _stage_.
 
 ## O roubo
 
 Aqui está o truque que mostra que alguém fez o dever de casa.
 
-Um navegador Chromium guarda senhas salvas e cookies em bancos SQLite. Com o navegador aberto, esses arquivos ficam travados. Então o stealer simplesmente mata o navegador com `taskkill.exe`. A sandbox viu ele ir atrás dos navegadores de novo e de novo.
+Um navegador Chromium guarda senhas salvas e cookies em bancos SQLite. Com o navegador aberto, esses arquivos ficam travados. Então o _stealer_ simplesmente mata o navegador com `taskkill.exe`. A _sandbox_ o viu ir atrás dos navegadores repetidas vezes.
 
-Com os navegadores fechados, os arquivos ficam livres para leitura. Estes são os que ele tocou no perfil do Edge:
+Com os navegadores fechados, os arquivos ficam livres para leitura. Estes são os que ele acessou no perfil do Edge:
 
-| Arquivo | O que tem dentro |
+| Arquivo | O que há dentro |
 |---|---|
 | `Web Data` | senhas salvas, preenchimento automático, cartões |
 | `Network\Cookies` | cookies de sessão |
 | `History` | histórico de navegação |
 | `Last Browser` | qual navegador estava em uso |
 
-Ele também carregou DLLs da instalação do Firefox, o que bate com usar a biblioteca de criptografia do próprio Firefox para ler os logins salvos. A sandbox ainda apontou possível roubo de carteiras de cripto e de dados de mensageiros.
+Ele também carregou DLLs da instalação do Firefox, o que é compatível com o uso da biblioteca de criptografia do próprio Firefox para ler os logins salvos. A _sandbox_ ainda apontou possível roubo de carteiras de cripto e de dados de mensageiros.
 
 Os cookies são o prêmio de verdade. Um cookie de sessão válido pula a senha e o MFA, e trocar só a senha nem sempre derruba essa sessão. (T1555.003, T1539)
 
 ## Para onde foi?
 
-Os mesmos processos que leram os dados do navegador abriram conexões TLS para `discord[.]com`. O conteúdo é cifrado, então não consigo mostrar o que foi enviado, mas um stealer falando com o Discord logo depois do roubo é a exfiltração clássica por webhook. (T1567.004, provável)
+Os mesmos processos que leram os dados do navegador abriram conexões TLS para `discord[.]com`. O conteúdo é cifrado, então não consigo mostrar o que foi enviado, mas um _stealer_ falando com o Discord logo depois do roubo é a exfiltração clássica por _webhook_. (T1567.004, provável)
 
-O Discord traz a vítima e leva o loot.
+O Discord traz a vítima e leva o _loot_.
 
-## A kill chain
+## A _kill chain_
 
-Siga o cartão: quem fala com quem, e o que viaja. Um link entra, um executável desce, o loot sai.
+Siga o cartão: quem fala com quem, e o que viaja. Um link entra, um executável desce, o _loot_ sai.
 
 <figure class="fig">
 <picture>
@@ -138,8 +138,8 @@ mavi chivas.exe     app Electron, seis processos
 
 | Técnica | ID | Evidência | Confiança |
 |---|---|---|---|
-| User Execution: Malicious File | T1204.002 | a vítima roda o mod falso | confirmada |
-| Virtualization/Sandbox Evasion: System Checks | T1497.001 | strings da BIOS via `reg query` | confirmada |
+| User Execution: Malicious File | T1204.002 | a vítima roda o _mod_ falso | confirmada |
+| Virtualization/Sandbox Evasion: System Checks | T1497.001 | _strings_ da BIOS via `reg query` | confirmada |
 | Query Registry | T1012 | `HKLM\HARDWARE\DESCRIPTION\System` | confirmada |
 | System Information Discovery | T1082 | GUID da máquina, nome do computador, CPU | confirmada |
 | System Network Configuration Discovery | T1016 | `myexternalip[.]com` | confirmada |
@@ -153,9 +153,9 @@ mavi chivas.exe     app Electron, seis processos
 
 Mapeamentos que eu descartei depois de reler a execução:
 
-- **T1027.004, Compile After Delivery.** O `csc.exe` compila, sim, mas só o ajudante que esconde a janela. O stealer já vem pronto.
-- **T1105, Ingress Tool Transfer.** Não existe segundo stage nessa execução. O navegador baixa o arquivo, a vítima roda. Isso é execução pelo usuário.
-- **T1567.002, Exfiltration to Cloud Storage.** A sandbox sugeriu por causa do Dropbox. Canal certo, direção errada: o Dropbox só entregou.
+- **T1027.004, Compile After Delivery.** O `csc.exe` compila, sim, mas só o ajudante que esconde a janela. O _stealer_ já vem pronto.
+- **T1105, Ingress Tool Transfer.** Não existe segundo _stage_ nessa execução. O navegador baixa o arquivo, a vítima roda. Isso é execução pelo usuário.
+- **T1567.002, Exfiltration to Cloud Storage.** A _sandbox_ sugeriu por causa do Dropbox. Canal certo, direção errada: o Dropbox só entregou.
 - **T1489, Service Stop.** Matar os navegadores não é um ataque à disponibilidade. É o passo que torna o roubo possível.
 
 ## Indicadores
@@ -171,10 +171,10 @@ Mapeamentos que eu descartei depois de reler a execução:
 
 ## O que eu tirei disso
 
-- **Uma string não é um comportamento.** No começo eu chamei de downloader por causa de uma string `downloadFile`. Os arquivos que ele tocou é que confirmaram o stealer.
-- **Decodifique antes de concluir.** "PowerShell compila C#" parecia payload em memória. Decodificado, só escondia a janela. Meu primeiro write-up errou nisso.
-- **O mapeamento da sandbox é um rascunho.** Acertou o canal do Dropbox e errou a direção.
-- **Plataformas confiáveis fazem o trabalho pesado.** Discord para o lure e para a saída, Dropbox para o arquivo. Ninguém bloqueia nenhum dos dois.
-- **Mate o lock, depois leia.** Pequeno, chato e eficaz. É assim que um bom tradecraft se parece.
+- **Uma _string_ não é um comportamento.** No começo eu chamei de _downloader_ por causa de uma _string_ `downloadFile`. Foram os arquivos que ele acessou que confirmaram o _stealer_.
+- **Decodifique antes de concluir.** "PowerShell compila C#" parecia _payload_ em memória. Decodificado, só escondia a janela. Meu primeiro _write-up_ errou nisso.
+- **O mapeamento da _sandbox_ é um rascunho.** Acertou o canal do Dropbox e errou a direção.
+- **Plataformas confiáveis fazem o trabalho pesado.** Discord para o _lure_ e para a saída, Dropbox para o arquivo. Ninguém bloqueia nenhum dos dois.
+- **Mate o _lock_, depois leia.** Pequeno, chato e eficaz. É assim que um bom _tradecraft_ se parece.
 
 O relatório completo, revisado com as correções acima, está no [repositório mavi-chivas](https://github.com/guisosi/mavi-chivas).

@@ -38,7 +38,7 @@ export const projects = [
 export const pt = {
   goal: ['Red Team Operator', 'simulando adversários em ambientes autorizados, de ponta a ponta'],
   projects: [
-    'Análise de um infostealer disfarçado de mod de Minecraft.',
-    'Infra self-hosted com Caddy, CrowdSec, Prometheus, Grafana, Loki e Uptime Kuma. Observabilidade como código.',
+    'Análise de um _infostealer_ disfarçado de _mod_ de Minecraft.',
+    'Infra _self-hosted_ com Caddy, CrowdSec, Prometheus, Grafana, Loki e Uptime Kuma. Observabilidade como código.',
   ],
 };

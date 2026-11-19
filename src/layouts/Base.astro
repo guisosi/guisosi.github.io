@@ -3,7 +3,7 @@ import '../styles/global.css';
 import Banner from '../components/Banner.astro';
 import { sec, sectionKeys, shortName } from '../lib/sections';
 import { profile } from '../data/profile';
-import { useT, localize, unlocalize, htmlLang, ogLocale, type Lang } from '../i18n/ui';
+import { useT, localize, unlocalize, htmlLang, ogLocale, plain, type Lang } from '../i18n/ui';
 
 interface Props {
   title?: string;
@@ -15,7 +15,8 @@ interface Props {
 
 const { lang = 'en', single = false } = Astro.props;
 const t = useT(lang);
-const { title, description = t('site.description') } = Astro.props;
+const title = Astro.props.title && plain(Astro.props.title);
+const description = plain(Astro.props.description ?? t('site.description'));
 const pageTitle = title ? `${title} | guisosi` : 'guisosi';
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const base = unlocalize(Astro.url.pathname);

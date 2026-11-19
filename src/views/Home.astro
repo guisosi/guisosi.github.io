@@ -7,7 +7,7 @@ import Pulse from '../components/Pulse.astro';
 import CamFrame from '../components/CamFrame.astro';
 import { profile, roadmap, projects, pt } from '../data/profile';
 import { sec, sectionKeys, getLatest, getFeatured, fmtDate, slugOf } from '../lib/sections';
-import { useT, localize, type Lang } from '../i18n/ui';
+import { useT, localize, rich, type Lang } from '../i18n/ui';
 
 interface Props {
   lang: Lang;
@@ -108,7 +108,7 @@ const featHref = featured && L(`/${featured.section}/${slugOf(featured.entry)}/`
           <a class="cell" href={L(`/${s}/`)}>
             <span class="kicker">{sec(s, lang).kicker}</span>
             <h3>{sec(s, lang).name}</h3>
-            <p class="muted">{sec(s, lang).blurb}</p>
+            <p class="muted" set:html={rich(sec(s, lang).blurb)} />
             <span class="cell__go">/{s} →</span>
           </a>
         ))
@@ -126,9 +126,9 @@ const featHref = featured && L(`/${featured.section}/${slugOf(featured.entry)}/`
               {fmtDate(featured.entry.data.date)} · {sec(featured.section, lang).type}
             </p>
             <h2>
-              <a href={featHref}>{featured.entry.data.title}</a>
+              <a href={featHref} set:html={rich(featured.entry.data.title)} />
             </h2>
-            <p class="muted">{featured.entry.data.description}</p>
+            <p class="muted" set:html={rich(featured.entry.data.description)} />
             <p class="featured__go">
               <a class="btn" href={featHref}>{t('home.read')}</a>
               {featured.entry.data.repo && (
@@ -165,7 +165,7 @@ const featHref = featured && L(`/${featured.section}/${slugOf(featured.entry)}/`
         projs.map((p) => (
           <a class="cell" href={p.url} rel="noopener">
             <h3>{p.name}</h3>
-            <p class="muted">{p.desc}</p>
+            <p class="muted" set:html={rich(p.desc)} />
             <span>
               {p.tags.map((t) => (
                 <span class="tag">{t}</span>
@@ -184,7 +184,7 @@ const featHref = featured && L(`/${featured.section}/${slugOf(featured.entry)}/`
       <span class="kicker">{t('home.rulesKicker')}</span>
       <h2>{t('home.rules1')} <em>{t('home.rules2')}</em></h2>
       <ol>
-        {t('home.rules').map((r) => <li>{r}</li>)}
+        {t('home.rules').map((r) => <li set:html={rich(r)} />)}
       </ol>
     </div>
   </section>

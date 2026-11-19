@@ -1,7 +1,7 @@
 ---
 import StatusMark from './StatusMark.astro';
 import { fmtDate, shortName, slugOf, type SectionKey, type Entry } from '../lib/sections';
-import { useT, localize, type Lang } from '../i18n/ui';
+import { useT, localize, rich, type Lang } from '../i18n/ui';
 
 type Item = { section: SectionKey; entry: Entry };
 
@@ -16,7 +16,7 @@ const t = useT(lang);
 
 {
   items.length === 0 ? (
-    <p class="empty muted">{t('list.empty')}</p>
+    <p class="empty muted" set:html={rich(t('list.empty'))} />
   ) : (
     <ol class="entries">
       {items.map(({ section, entry }) => {
@@ -30,10 +30,10 @@ const t = useT(lang);
             </div>
             <div class="entry__main">
               <h3>
-                <a href={href}>{entry.data.title}</a>
+                <a href={href} set:html={rich(entry.data.title)} />
                 {entry.data.draft && <span class="tag">{t('status.draft')}</span>}
               </h3>
-              <p class="muted">{entry.data.description}</p>
+              <p class="muted" set:html={rich(entry.data.description)} />
               <a class="entry__more" href={href}>
                 {t('list.more')}
               </a>

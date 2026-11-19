@@ -9,7 +9,7 @@ export const sections = {
     kicker: 'research & deep dives',
     blurb: 'Deep dives, notes and whatever I am digging into.',
     pt: {
-      blurb: 'Deep dives, anotações e o que eu estiver investigando.',
+      blurb: '_Deep dives_, anotações e o que eu estiver investigando.',
     },
   },
   'write-ups': {
@@ -19,7 +19,7 @@ export const sections = {
     kicker: 'boxes, ctfs & labs',
     blurb: 'Machines and challenges, start to finish. Retired boxes only.',
     pt: {
-      blurb: 'Máquinas e desafios, do começo ao fim. Só boxes aposentadas.',
+      blurb: 'Máquinas e desafios, do começo ao fim. Só _boxes_ aposentadas.',
     },
   },
   labs: {
@@ -39,7 +39,7 @@ export const sections = {
     kicker: 'pocs, scripts & tooling',
     blurb: 'Proofs of concept, scripts and tooling.',
     pt: {
-      blurb: 'PoCs, scripts e tooling.',
+      blurb: 'PoCs, scripts e _tooling_.',
     },
   },
 } as const;
